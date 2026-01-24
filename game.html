@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ボタンライトゲーム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .instruction {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+
+        .game-button {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: none;
+            background-color: #e0e0e0;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .game-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-button:active {
+            transform: scale(0.95);
+        }
+
+        .game-button.light-red {
+            background-color: #ff4444;
+            color: white;
+            box-shadow: 0 0 30px rgba(255, 68, 68, 0.8),
+                        0 0 60px rgba(255, 68, 68, 0.6);
+            animation: pulse 0.5s ease-in-out;
+        }
+
+        .game-button.light-blue {
+            background-color: #4444ff;
+            color: white;
+            box-shadow: 0 0 30px rgba(68, 68, 255, 0.8),
+                        0 0 60px rgba(68, 68, 255, 0.6);
+            animation: pulse 0.5s ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .stats {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 10px;
+        }
+
+        .stats p {
+            font-size: 1.2em;
+            color: #333;
+            margin: 10px 0;
+        }
+
+        .stats span {
+            font-weight: bold;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ボタンライトゲーム</h1>
+        <p class="instruction">ボタンを押してみよう！10回に1回光るよ！</p>
+        <button id="gameButton" class="game-button">押してね！</button>
+        <div class="stats">
+            <p>押した回数: <span id="clickCount">0</span></p>
+            <p>光った回数: <span id="lightCount">0</span></p>
+        </div>
+    </div>
+
+    <script>
+        // ゲームの状態管理
+        let clickCount = 0;
+        let lightCount = 0;
+
+        // DOM要素の取得
+        const gameButton = document.getElementById('gameButton');
+        const clickCountElement = document.getElementById('clickCount');
+        const lightCountElement = document.getElementById('lightCount');
+
+        // ボタンクリック時の処理
+        gameButton.addEventListener('click', function() {
+            // クリック回数を増やす
+            clickCount++;
+            clickCountElement.textContent = clickCount;
+
+            // 10%の確率で光る（10回に1回）
+            const shouldLight = Math.random() < 0.1;
+
+            if (shouldLight) {
+                // 光った回数を増やす
+                lightCount++;
+                lightCountElement.textContent = lightCount;
+
+                // ランダムに赤か青を選ぶ
+                const isRed = Math.random() < 0.5;
+                const lightClass = isRed ? 'light-red' : 'light-blue';
+
+                // ボタンを光らせる
+                gameButton.classList.add(lightClass);
+                gameButton.textContent = isRed ? '赤！' : '青！';
+
+                // 1秒後に元に戻す
+                setTimeout(() => {
+                    gameButton.classList.remove(lightClass);
+                    gameButton.textContent = '押してね！';
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>
