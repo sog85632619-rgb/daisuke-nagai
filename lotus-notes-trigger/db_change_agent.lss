@@ -1,0 +1,178 @@
+'===============================================================================
+' Lotus Notes DB 変更監視エージェント
+'
+' 概要: データベース内の文書が追加/変更されたときに処理を実行するエージェント
+'
+' 設定方法:
+'   1. Domino Designerでエージェントを作成
+'   2. トリガー: 「新規および変更された文書について」または「スケジュール」
+'   3. このコードをエージェントに貼り付け
+'===============================================================================
+
+Option Public
+Option Declare
+
+Sub Initialize
+    '-----------------------------------------------------------------------
+    ' メイン処理
+    '-----------------------------------------------------------------------
+    Dim session As New NotesSession
+    Dim db As NotesDatabase
+    Dim collection As NotesDocumentCollection
+    Dim doc As NotesDocument
+    Dim lastRunTime As Variant
+
+    On Error GoTo ErrorHandler
+
+    Set db = session.CurrentDatabase
+
+    ' 前回実行時刻を取得（プロファイル文書から）
+    lastRunTime = GetLastRunTime(db)
+
+    ' 前回実行以降に変更された文書を取得
+    Set collection = db.GetModifiedDocuments(lastRunTime)
+
+    Print "処理対象文書数: " & Cstr(collection.Count)
+
+    If collection.Count > 0 Then
+        Set doc = collection.GetFirstDocument
+
+        Do While Not doc Is Nothing
+            ' ここに各文書に対する処理を記述
+            Call ProcessDocument(doc)
+            Set doc = collection.GetNextDocument(doc)
+        Loop
+    End If
+
+    ' 実行時刻を保存
+    Call SaveLastRunTime(db)
+
+    Print "処理完了"
+    Exit Sub
+
+ErrorHandler:
+    Print "エラー発生: " & Error$ & " (行: " & Cstr(Erl) & ")"
+    Exit Sub
+End Sub
+
+'-------------------------------------------------------------------------------
+' 個別文書の処理
+'-------------------------------------------------------------------------------
+Sub ProcessDocument(doc As NotesDocument)
+    Dim subject As String
+    Dim modifiedDate As Variant
+
+    ' 文書情報を取得
+    subject = doc.GetItemValue("Subject")(0)
+    modifiedDate = doc.LastModified
+
+    Print "文書処理中: " & subject & " (更新日時: " & Cstr(modifiedDate) & ")"
+
+    '-----------------------------------------------------------------------
+    ' ここにカスタム処理を追加
+    ' 例:
+    '   - メール通知を送信
+    '   - 別のDBに転記
+    '   - 外部システムにデータ送信
+    '   - ログ記録
+    '-----------------------------------------------------------------------
+
+    ' 例: 特定のフィールド値に基づいて処理を分岐
+    Dim status As String
+    status = doc.GetItemValue("Status")(0)
+
+    Select Case status
+        Case "新規"
+            Call HandleNewDocument(doc)
+        Case "承認待ち"
+            Call HandlePendingApproval(doc)
+        Case "完了"
+            Call HandleCompleted(doc)
+    End Select
+End Sub
+
+'-------------------------------------------------------------------------------
+' 新規文書の処理
+'-------------------------------------------------------------------------------
+Sub HandleNewDocument(doc As NotesDocument)
+    ' 新規文書に対する処理
+    Print "  → 新規文書を処理しました"
+
+    ' 例: 通知メールを送信
+    ' Call SendNotificationMail(doc, "新規文書が作成されました")
+End Sub
+
+'-------------------------------------------------------------------------------
+' 承認待ち文書の処理
+'-------------------------------------------------------------------------------
+Sub HandlePendingApproval(doc As NotesDocument)
+    ' 承認待ち文書に対する処理
+    Print "  → 承認待ち文書を処理しました"
+
+    ' 例: 承認者に通知
+    ' Call NotifyApprover(doc)
+End Sub
+
+'-------------------------------------------------------------------------------
+' 完了文書の処理
+'-------------------------------------------------------------------------------
+Sub HandleCompleted(doc As NotesDocument)
+    ' 完了文書に対する処理
+    Print "  → 完了文書を処理しました"
+
+    ' 例: アーカイブ処理
+    ' Call ArchiveDocument(doc)
+End Sub
+
+'-------------------------------------------------------------------------------
+' 前回実行時刻を取得
+'-------------------------------------------------------------------------------
+Function GetLastRunTime(db As NotesDatabase) As Variant
+    Dim profileDoc As NotesDocument
+
+    Set profileDoc = db.GetProfileDocument("AgentRunLog", "DBChangeAgent")
+
+    If profileDoc.HasItem("LastRunTime") Then
+        GetLastRunTime = profileDoc.GetItemValue("LastRunTime")(0)
+    Else
+        ' 初回実行時は24時間前を設定
+        GetLastRunTime = Now - 1
+    End If
+End Function
+
+'-------------------------------------------------------------------------------
+' 実行時刻を保存
+'-------------------------------------------------------------------------------
+Sub SaveLastRunTime(db As NotesDatabase)
+    Dim profileDoc As NotesDocument
+
+    Set profileDoc = db.GetProfileDocument("AgentRunLog", "DBChangeAgent")
+    Call profileDoc.ReplaceItemValue("LastRunTime", Now)
+    Call profileDoc.Save(True, False)
+End Sub
+
+'-------------------------------------------------------------------------------
+' 通知メール送信（サンプル）
+'-------------------------------------------------------------------------------
+Sub SendNotificationMail(doc As NotesDocument, message As String)
+    Dim session As New NotesSession
+    Dim mailDb As NotesDatabase
+    Dim mailDoc As NotesDocument
+    Dim rtItem As NotesRichTextItem
+
+    Set mailDb = session.CurrentDatabase
+    Set mailDoc = mailDb.CreateDocument
+
+    mailDoc.Form = "Memo"
+    mailDoc.Subject = "【通知】DB変更通知: " & message
+    mailDoc.SendTo = "admin@example.com"  ' 送信先を設定
+
+    Set rtItem = mailDoc.CreateRichTextItem("Body")
+    Call rtItem.AppendText("文書が更新されました。")
+    Call rtItem.AddNewLine(2)
+    Call rtItem.AppendText("文書タイトル: " & doc.GetItemValue("Subject")(0))
+    Call rtItem.AddNewLine(1)
+    Call rtItem.AppendText("更新日時: " & Cstr(doc.LastModified))
+
+    Call mailDoc.Send(False)
+End Sub
