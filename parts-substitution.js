@@ -474,13 +474,11 @@ function searchParts(query, filters) {
       })
       .filter(Boolean);
 
-    // ── ソート: ① ピンコンパチ優先  ② コスト昇順  ③ 電気スコア降順 ──
+    // ── ソート: ① ピンコンパチ優先  ② 電気スコア降順  ③ コスト昇順 ──
     candidates.sort((a, b) => {
       if (a.pinCompatible !== b.pinCompatible) return b.pinCompatible - a.pinCompatible;
-      const costA = a.unitPriceJPY ?? 999;
-      const costB = b.unitPriceJPY ?? 999;
-      if (costA !== costB) return costA - costB;
-      return b.eScore - a.eScore;
+      if (b.eScore !== a.eScore) return b.eScore - a.eScore;
+      return (a.unitPriceJPY ?? 999) - (b.unitPriceJPY ?? 999);
     });
 
     return { original, substitutes: candidates };
@@ -597,7 +595,7 @@ function renderResults(result) {
           <span class="section-icon">✓</span>
           <div>
             <h3>基板変更不要の代替品 <span class="section-count">${pinOk.length}件</span></h3>
-            <p>同一ピン配置・同一パッケージ。そのまま差し替え可能。コスト順で表示。</p>
+            <p>同一ピン配置・同一パッケージ。そのまま差し替え可能。電気スペック順 → コスト安い順で表示。</p>
           </div>
         </div>
         <div class="substitute-list">
