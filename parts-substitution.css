@@ -421,7 +421,7 @@ body {
   background: #fff;
   border-radius: 14px;
   padding: 32px;
-  max-width: 520px;
+  max-width: 720px;
   width: 100%;
   position: relative;
   box-shadow: 0 20px 60px rgba(0,0,0,.25);
@@ -461,6 +461,105 @@ body {
   border-radius: 6px;
 }
 
+/* ─── 比較テーブル (モーダル内) ─────────────────── */
+.cmp-block {
+  margin-bottom: 24px;
+}
+.cmp-title {
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--gray-800);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.cmp-note {
+  font-size: .78rem;
+  color: var(--gray-400);
+  margin-bottom: 8px;
+  font-style: italic;
+}
+.cmp-divider {
+  border: none;
+  border-top: 1px dashed var(--gray-200);
+  margin: 20px 0;
+}
+.cmp-table-wrap { overflow-x: auto; }
+.cmp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .82rem;
+  table-layout: auto;
+}
+.cmp-table th {
+  background: var(--gray-100);
+  padding: 6px 10px;
+  text-align: left;
+  font-weight: 600;
+  font-size: .78rem;
+  color: var(--gray-600);
+  border-bottom: 2px solid var(--gray-200);
+  white-space: nowrap;
+}
+.cmp-table td {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--gray-100);
+  vertical-align: middle;
+}
+.cmp-label { color: var(--gray-600); font-weight: 500; white-space: nowrap; }
+.cmp-orig, .cmp-cand { font-family: 'Courier New', monospace; font-size: .82rem; }
+
+/* 行ごとの背景色 (判定結果) */
+.cmp-row--better { background: #f0fdf4; }
+.cmp-row--warn   { background: #fff7ed; }
+.cmp-row--ok     { background: #f8faff; }
+
+/* 判定セル */
+.cmp-status { font-size: .75rem; font-weight: 700; white-space: nowrap; }
+.cmp-status--better { color: #15803d; }
+.cmp-status--ok     { color: var(--primary); }
+.cmp-status--same   { color: var(--gray-400); }
+.cmp-status--warn   { color: var(--warning); }
+.cmp-status--info   { color: var(--gray-400); }
+
+/* ピン配置テーブル */
+.cmp-table--pin .cmp-pin-num  { text-align: center; font-weight: 700; font-family: 'Courier New', monospace; width: 40px; }
+.cmp-table--pin .cmp-pin-name { font-family: 'Courier New', monospace; font-weight: 600; color: var(--primary); }
+.cmp-table--pin .cmp-pin-func { color: var(--gray-600); font-size: .8rem; }
+
+/* ピンコンパチ注記 */
+.pin-compat-note {
+  font-size: .72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+.pin-compat-note--ok { background: #d1fae5; color: #15803d; }
+.pin-compat-note--ng { background: #fef3c7; color: #92400e; }
+
+/* 2列ピン比較 */
+.cmp-pin-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.cmp-pin-half h5 {
+  font-size: .85rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.cmp-pin-desc {
+  font-size: .72rem;
+  font-weight: 400;
+  color: var(--gray-400);
+}
+
 /* ─── Responsive ──────────────────────────────── */
 @media (max-width: 640px) {
   .header h1 { font-size: 1.2rem; }
@@ -468,4 +567,6 @@ body {
   .btn-primary { width: 100%; }
   .substitute-list { grid-template-columns: 1fr; }
   .result-section-header { flex-direction: column; gap: 8px; }
+  .cmp-pin-pair { grid-template-columns: 1fr; }
+  .modal { padding: 20px 16px; }
 }

@@ -359,6 +359,132 @@ const PARTS_DB = [
 ];
 
 // =============================================
+// ピン配置データベース
+// =============================================
+// pinoutId をキーに、各パッケージのピン配置情報を保持する。
+// pins 配列: index 0 = ピン番号1 (TO-92など) / DIPは index = ピン番号 - 1
+
+const PINOUT_DB = {
+  'dual-opamp-8pin': {
+    description: 'デュアルOPアンプ 8ピン標準配置',
+    note: 'DIP-8 / SOP-8 共通。ピン1が切り欠き・マーク側。',
+    packages: ['DIP', 'SOP'],
+    pins: [
+      { num: 1, name: 'OUT A',  func: '出力 A' },
+      { num: 2, name: 'IN A−', func: '反転入力 A' },
+      { num: 3, name: 'IN A+', func: '非反転入力 A' },
+      { num: 4, name: 'GND',   func: '電源マイナス / V−' },
+      { num: 5, name: 'IN B+', func: '非反転入力 B' },
+      { num: 6, name: 'IN B−', func: '反転入力 B' },
+      { num: 7, name: 'OUT B', func: '出力 B' },
+      { num: 8, name: 'VCC',   func: '電源プラス / V+' },
+    ],
+  },
+  'timer-555-8pin': {
+    description: '555タイマー 8ピン配置',
+    note: 'DIP-8 / SOP-8 共通。ピン1が切り欠き・マーク側。',
+    packages: ['DIP', 'SOP'],
+    pins: [
+      { num: 1, name: 'GND',   func: 'グランド' },
+      { num: 2, name: 'TRIG',  func: 'トリガ' },
+      { num: 3, name: 'OUT',   func: '出力' },
+      { num: 4, name: 'RESET', func: 'リセット (L=リセット)' },
+      { num: 5, name: 'CTRL',  func: 'コントロール電圧' },
+      { num: 6, name: 'THR',   func: 'しきい値' },
+      { num: 7, name: 'DIS',   func: '放電' },
+      { num: 8, name: 'VCC',   func: '電源' },
+    ],
+  },
+  'to92-ecb': {
+    description: 'TO-92 / E-C-B',
+    note: '平面側を手前にして左から ①E ②C ③B',
+    packages: ['TO-92'],
+    pins: [
+      { num: 1, name: 'E', func: 'エミッタ' },
+      { num: 2, name: 'C', func: 'コレクタ' },
+      { num: 3, name: 'B', func: 'ベース' },
+    ],
+  },
+  'to92-ecb-pnp': {
+    description: 'TO-92 / E-C-B (PNP)',
+    note: '平面側を手前にして左から ①E ②C ③B (PNP型)',
+    packages: ['TO-92'],
+    pins: [
+      { num: 1, name: 'E', func: 'エミッタ' },
+      { num: 2, name: 'C', func: 'コレクタ' },
+      { num: 3, name: 'B', func: 'ベース' },
+    ],
+  },
+  'to92-cbe': {
+    description: 'TO-92 / C-B-E',
+    note: '平面側を手前にして左から ①C ②B ③E',
+    packages: ['TO-92'],
+    pins: [
+      { num: 1, name: 'C', func: 'コレクタ' },
+      { num: 2, name: 'B', func: 'ベース' },
+      { num: 3, name: 'E', func: 'エミッタ' },
+    ],
+  },
+  'to92-ebc': {
+    description: 'TO-92 / E-B-C',
+    note: '平面側を手前にして左から ①E ②B ③C',
+    packages: ['TO-92'],
+    pins: [
+      { num: 1, name: 'E', func: 'エミッタ' },
+      { num: 2, name: 'B', func: 'ベース' },
+      { num: 3, name: 'C', func: 'コレクタ' },
+    ],
+  },
+  'diode-do41': {
+    description: 'DO-41 / アノード-カソード',
+    note: '帯マークなし側=アノード、帯マーク側=カソード',
+    packages: ['DO-41'],
+    pins: [
+      { num: 1, name: 'A', func: 'アノード (帯マークなし側)' },
+      { num: 2, name: 'K', func: 'カソード (帯マーク側)' },
+    ],
+  },
+  'diode-do35': {
+    description: 'DO-35 / アノード-カソード',
+    note: '帯マークなし側=アノード、帯マーク側=カソード',
+    packages: ['DO-35'],
+    pins: [
+      { num: 1, name: 'A', func: 'アノード (帯マークなし側)' },
+      { num: 2, name: 'K', func: 'カソード (帯マーク側)' },
+    ],
+  },
+  'diode-sma': {
+    description: 'SMA / アノード-カソード',
+    note: 'SMD。マーク面がカソード側。',
+    packages: ['SMA'],
+    pins: [
+      { num: 1, name: 'A', func: 'アノード' },
+      { num: 2, name: 'K', func: 'カソード (マーク面)' },
+    ],
+  },
+  'mosfet-to220-gds': {
+    description: 'TO-220 / G-D-S',
+    note: '平面(マーク)面を手前にして左から ①G ②D ③S',
+    packages: ['TO-220'],
+    pins: [
+      { num: 1, name: 'G', func: 'ゲート' },
+      { num: 2, name: 'D', func: 'ドレイン' },
+      { num: 3, name: 'S', func: 'ソース' },
+    ],
+  },
+  'mosfet-to92-sgd': {
+    description: 'TO-92 / S-G-D',
+    note: '平面側を手前にして左から ①S ②G ③D',
+    packages: ['TO-92'],
+    pins: [
+      { num: 1, name: 'S', func: 'ソース' },
+      { num: 2, name: 'G', func: 'ゲート' },
+      { num: 3, name: 'D', func: 'ドレイン' },
+    ],
+  },
+};
+
+// =============================================
 // ピンコンパチ判定
 // =============================================
 
@@ -686,25 +812,223 @@ function showState(state) {
 }
 
 // =============================================
-// モーダル
+// モーダル — 比較テーブル付き
 // =============================================
 
 let lastResult = null;
 
-function openModal(partId) {
-  const part = PARTS_DB.find(p => p.id === partId);
-  if (!part) return;
+// ── 電気的特性比較テーブル ──────────────────────
 
-  const cost = costRank(part);
+function cmpRow(label, origVal, candVal, status) {
+  // status: 'better' | 'ok' | 'same' | 'warn' | 'info'
+  const icons = { better: '▲ 優', ok: '✓ OK', same: '= 同等', warn: '△ 要注意', info: '— 参考' };
+  return `
+    <tr class="cmp-row cmp-row--${status}">
+      <td class="cmp-label">${label}</td>
+      <td class="cmp-orig">${origVal ?? '—'}</td>
+      <td class="cmp-cand">${candVal ?? '—'}</td>
+      <td class="cmp-status cmp-status--${status}">${icons[status] ?? ''}</td>
+    </tr>`;
+}
 
-  document.getElementById('modalTitle').textContent = `${part.partNumber} — 詳細情報`;
-  document.getElementById('modalBody').innerHTML = `
+function renderElecCmp(orig, cand) {
+  const os = orig.specs;
+  const cs = cand.specs;
+  let rows = '';
+
+  // 最大電圧
+  if (os.voltage || cs.voltage) {
+    const ov = os.voltage?.max, cv = cs.voltage?.max;
+    const status = cv == null ? 'info' : cv > ov ? 'better' : cv === ov ? 'same' : cv >= ov * 0.9 ? 'ok' : 'warn';
+    rows += cmpRow('最大電圧', ov != null ? `${ov} V` : '—', cv != null ? `${cv} V` : '—', status);
+  }
+  // 最小動作電圧
+  if (os.voltage?.min != null || cs.voltage?.min != null) {
+    const ov = os.voltage?.min, cv = cs.voltage?.min;
+    const status = cv == null ? 'info' : cv < ov ? 'better' : cv === ov ? 'same' : cv <= ov * 1.2 ? 'ok' : 'warn';
+    rows += cmpRow('最小電圧', ov != null ? `${ov} V` : '—', cv != null ? `${cv} V` : '—', status);
+  }
+  // 最大電流
+  if (os.current || cs.current) {
+    const ov = os.current?.max, cv = cs.current?.max;
+    const status = cv == null ? 'info' : cv > ov ? 'better' : cv === ov ? 'same' : cv >= ov * 0.8 ? 'ok' : 'warn';
+    rows += cmpRow('最大電流', ov != null ? `${ov} A` : '—', cv != null ? `${cv} A` : '—', status);
+  }
+  // 最高動作温度
+  if (os.tempRange || cs.tempRange) {
+    const ov = os.tempRange?.max, cv = cs.tempRange?.max;
+    const status = cv == null ? 'info' : cv > ov ? 'better' : cv === ov ? 'same' : cv >= ov - 5 ? 'ok' : 'warn';
+    rows += cmpRow('最高動作温度', ov != null ? `${ov} ℃` : '—', cv != null ? `${cv} ℃` : '—', status);
+  }
+  // 最低動作温度
+  if (os.tempRange || cs.tempRange) {
+    const ov = os.tempRange?.min, cv = cs.tempRange?.min;
+    const status = cv == null ? 'info' : cv < ov ? 'better' : cv === ov ? 'same' : cv <= ov + 5 ? 'ok' : 'warn';
+    rows += cmpRow('最低動作温度', ov != null ? `${ov} ℃` : '—', cv != null ? `${cv} ℃` : '—', status);
+  }
+  // 文字列スペック (帯域幅, hFE, Rds(on), 消費電力, 順電圧降下)
+  const strFields = [
+    ['帯域幅', 'bandwidth'], ['hFE', 'hFE'], ['Rds(on)', 'rdsOn'],
+    ['消費電力', 'power'], ['順電圧降下', 'vf'],
+  ];
+  strFields.forEach(([label, key]) => {
+    const ov = os[key], cv = cs[key];
+    if (ov || cv) {
+      const status = ov === cv ? 'same' : 'info';
+      rows += cmpRow(label, ov ?? '—', cv ?? '—', status);
+    }
+  });
+  // 参考単価
+  const op = orig.unitPriceJPY, cp = cand.unitPriceJPY;
+  if (op || cp) {
+    const status = cp == null ? 'info' : cp < op ? 'better' : cp === op ? 'same' : cp <= op * 1.3 ? 'ok' : 'warn';
+    rows += cmpRow('参考単価', op ? `約${op}円` : '—', cp ? `約${cp}円` : '—', status);
+  }
+
+  return `
+    <div class="cmp-block">
+      <h4 class="cmp-title">⚡ 電気的特性</h4>
+      <div class="cmp-table-wrap">
+        <table class="cmp-table">
+          <thead>
+            <tr>
+              <th>スペック</th>
+              <th>元: ${orig.partNumber}</th>
+              <th>代替: ${cand.partNumber}</th>
+              <th>判定</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+// ── パッケージ比較テーブル ──────────────────────
+
+function renderPackageCmp(orig, cand) {
+  const allPkgs = [...new Set([...(orig.specs.package ?? []), ...(cand.specs.package ?? [])])].sort();
+  const rows = allPkgs.map(pkg => {
+    const hasO = (orig.specs.package ?? []).includes(pkg);
+    const hasC = (cand.specs.package ?? []).includes(pkg);
+    const compat = hasO && hasC;
+    return `
+      <tr class="cmp-row ${compat ? 'cmp-row--ok' : ''}">
+        <td class="cmp-label">${pkg}</td>
+        <td class="cmp-orig">${hasO ? '✓' : '—'}</td>
+        <td class="cmp-cand">${hasC ? '✓' : '—'}</td>
+        <td class="cmp-status ${compat ? 'cmp-status--ok' : 'cmp-status--info'}">
+          ${compat ? '✓ 互換' : hasO ? '元のみ' : '代替のみ'}
+        </td>
+      </tr>`;
+  }).join('');
+
+  return `
+    <div class="cmp-block">
+      <h4 class="cmp-title">📦 パッケージ</h4>
+      <div class="cmp-table-wrap">
+        <table class="cmp-table">
+          <thead>
+            <tr>
+              <th>パッケージ</th>
+              <th>元: ${orig.partNumber}</th>
+              <th>代替: ${cand.partNumber}</th>
+              <th>互換</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+// ── ピン情報比較テーブル ────────────────────────
+
+function renderPinCmp(orig, cand) {
+  const pinO = PINOUT_DB[orig.pinoutId];
+  const pinC = PINOUT_DB[cand.pinoutId];
+
+  if (!pinO && !pinC) return '';
+
+  const pinCompat = isPinCompatible(orig, cand);
+
+  if (pinCompat && pinO) {
+    // 同一ピン配置 → 共通テーブル1本
+    const rows = pinO.pins.map(p =>
+      `<tr>
+        <td class="cmp-pin-num">${p.num}</td>
+        <td class="cmp-pin-name">${p.name}</td>
+        <td class="cmp-pin-func">${p.func}</td>
+        <td class="cmp-status cmp-status--ok">✓</td>
+      </tr>`
+    ).join('');
+    return `
+      <div class="cmp-block">
+        <h4 class="cmp-title">📌 ピン配置 <span class="pin-compat-note pin-compat-note--ok">完全一致 — 基板変更不要</span></h4>
+        <p class="cmp-note">${pinO.note ?? ''}</p>
+        <div class="cmp-table-wrap">
+          <table class="cmp-table cmp-table--pin">
+            <thead><tr><th>ピン</th><th>名称</th><th>機能</th><th>一致</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </div>`;
+  }
+
+  // 異なるピン配置 → 2つのテーブルを並べる
+  function pinTable(part, pinDef) {
+    if (!pinDef) return `<div class="cmp-pin-half"><h5>${part.partNumber}</h5><p class="cmp-note">ピン情報なし</p></div>`;
+    const rows = pinDef.pins.map(p =>
+      `<tr><td class="cmp-pin-num">${p.num}</td><td class="cmp-pin-name">${p.name}</td><td class="cmp-pin-func">${p.func}</td></tr>`
+    ).join('');
+    return `
+      <div class="cmp-pin-half">
+        <h5>${part.partNumber} <span class="cmp-pin-desc">${pinDef.description}</span></h5>
+        <p class="cmp-note">${pinDef.note ?? ''}</p>
+        <table class="cmp-table cmp-table--pin">
+          <thead><tr><th>ピン</th><th>名称</th><th>機能</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+  }
+
+  return `
+    <div class="cmp-block">
+      <h4 class="cmp-title">📌 ピン配置 <span class="pin-compat-note pin-compat-note--ng">配置が異なります — 要確認</span></h4>
+      <div class="cmp-pin-pair">
+        ${pinTable(orig, pinO)}
+        ${pinTable(cand, pinC)}
+      </div>
+    </div>`;
+}
+
+// ── 部品詳細 (単独表示) ─────────────────────────
+
+function renderPartDetails(part) {
+  const pinDef = PINOUT_DB[part.pinoutId];
+  let pinHtml = '';
+  if (pinDef) {
+    const rows = pinDef.pins.map(p =>
+      `<tr><td class="cmp-pin-num">${p.num}</td><td class="cmp-pin-name">${p.name}</td><td class="cmp-pin-func">${p.func}</td></tr>`
+    ).join('');
+    pinHtml = `
+      <div class="cmp-block">
+        <h4 class="cmp-title">📌 ピン配置</h4>
+        <p class="cmp-note">${pinDef.note ?? ''}</p>
+        <div class="cmp-table-wrap">
+          <table class="cmp-table cmp-table--pin">
+            <thead><tr><th>ピン</th><th>名称</th><th>機能</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </div>`;
+  }
+  return `
     <div class="modal-specs">
       <p class="modal-desc">${part.description}</p>
       <div class="spec-grid spec-grid--modal">
         ${specRow('メーカー', part.manufacturer)}
         ${specRow('カテゴリ', categoryLabel(part.category))}
-        ${specRow('ピン配置ID', part.pinoutId || null)}
         ${specRow('参考単価', part.unitPriceJPY ? `約${part.unitPriceJPY}円` : null)}
         ${specRow('最大電圧', formatVoltage(part.specs.voltage))}
         ${specRow('最大電流', part.specs.current ? `${part.specs.current.max} ${part.specs.current.unit}` : null)}
@@ -720,8 +1044,33 @@ function openModal(partId) {
       ${part.alternativeTo.length > 0
         ? `<p class="alt-info">代替元: ${part.alternativeTo.map(id => PARTS_DB.find(p => p.id === id)?.partNumber ?? id).join(', ')}</p>`
         : ''}
-    </div>
-  `;
+      ${pinHtml}
+    </div>`;
+}
+
+// ── モーダル開閉 ────────────────────────────────
+
+function openModal(partId) {
+  const part = PARTS_DB.find(p => p.id === partId);
+  if (!part) return;
+
+  const original = lastResult?.original;
+  const isSubstitute = original && original.id !== partId;
+
+  if (isSubstitute) {
+    document.getElementById('modalTitle').textContent =
+      `${part.partNumber} vs ${original.partNumber} — 比較`;
+    document.getElementById('modalBody').innerHTML =
+      renderElecCmp(original, part) +
+      renderPackageCmp(original, part) +
+      renderPinCmp(original, part) +
+      `<hr class="cmp-divider">` +
+      renderPartDetails(part);
+  } else {
+    document.getElementById('modalTitle').textContent = `${part.partNumber} — 詳細情報`;
+    document.getElementById('modalBody').innerHTML = renderPartDetails(part);
+  }
+
   document.getElementById('modalOverlay').style.display = 'flex';
 }
 
