@@ -529,6 +529,42 @@ body {
 .cmp-table--pin .cmp-pin-name { font-family: 'Courier New', monospace; font-weight: 600; color: var(--primary); }
 .cmp-table--pin .cmp-pin-func { color: var(--gray-600); font-size: .8rem; }
 
+/* カテゴリ行ラベル (詳細スペック比較) */
+.cmp-sub-block { margin-bottom: 16px; }
+.cmp-sub-block + .cmp-sub-block { border-top: 1px solid var(--gray-100); padding-top: 12px; }
+.cmp-cat-label {
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 4px;
+}
+.cmp-sym {
+  font-family: 'Courier New', monospace;
+  font-size: .78rem;
+  color: var(--gray-500);
+  margin-right: 4px;
+}
+.cmp-cond {
+  display: block;
+  font-size: .72rem;
+  color: var(--gray-400);
+  font-style: italic;
+  margin-top: 1px;
+}
+
+/* データシートリンク */
+.ds-link-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+.btn-ds { font-size: .82rem; padding: 6px 14px; white-space: nowrap; }
+.ds-source { font-size: .75rem; color: var(--gray-400); }
+
 /* ピンコンパチ注記 */
 .pin-compat-note {
   font-size: .72rem;
