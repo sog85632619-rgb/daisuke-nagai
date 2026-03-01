@@ -1,6 +1,18 @@
 // =============================================
 // 電子部品 代替品データベース
 // =============================================
+//
+// pinoutId: 同じIDの部品は同一ピン配置 → 基板変更不要で差し替え可能
+//           パッケージが共通していることも条件 (isPinCompatible 参照)
+//
+// unitPriceJPY: 参考単価(円) / 少量購入相場の目安
+//
+// TO-92 ピン配置メモ (平面側から左→右):
+//   2SC1815 / 2SA1015: E-C-B  (pinout: to92-ecb)
+//   BC547:              C-B-E  (pinout: to92-cbe)
+//   2N3904:             E-B-C  (pinout: to92-ebc)
+//   ※同じTO-92でもピン順が異なるため互いに非コンパチ
+// =============================================
 
 const PARTS_DB = [
   // ── IC / オペアンプ ──────────────────────────
@@ -10,6 +22,8 @@ const PARTS_DB = [
     name: '汎用デュアルオペアンプ',
     category: 'ic',
     manufacturer: 'Texas Instruments',
+    pinoutId: 'dual-opamp-8pin',   // DIP-8/SOP-8 標準デュアルOPアンプ配置
+    unitPriceJPY: 30,
     specs: {
       voltage: { min: 3, max: 32, unit: 'V' },
       current: { max: 0.7, unit: 'A' },
@@ -27,6 +41,8 @@ const PARTS_DB = [
     name: '汎用デュアルオペアンプ (改良版)',
     category: 'ic',
     manufacturer: 'Texas Instruments',
+    pinoutId: 'dual-opamp-8pin',
+    unitPriceJPY: 35,
     specs: {
       voltage: { min: 3, max: 32, unit: 'V' },
       current: { max: 0.7, unit: 'A' },
@@ -39,28 +55,13 @@ const PARTS_DB = [
     alternativeTo: ['lm358'],
   },
   {
-    id: 'mcp6002',
-    partNumber: 'MCP6002',
-    name: 'デュアルオペアンプ',
-    category: 'ic',
-    manufacturer: 'Microchip',
-    specs: {
-      voltage: { min: 1.8, max: 6, unit: 'V' },
-      current: { max: 0.025, unit: 'A' },
-      tempRange: { min: -40, max: 125, unit: '℃' },
-      package: ['DIP', 'SOP'],
-      bandwidth: '1 MHz',
-      channels: 2,
-    },
-    description: '低電圧・低消費電流デュアルオペアンプ。',
-    alternativeTo: ['lm358'],
-  },
-  {
     id: 'rc4558',
     partNumber: 'RC4558',
     name: 'デュアルオペアンプ',
     category: 'ic',
     manufacturer: 'Texas Instruments',
+    pinoutId: 'dual-opamp-8pin',   // LM358と同一ピン配置
+    unitPriceJPY: 40,
     specs: {
       voltage: { min: 6, max: 36, unit: 'V' },
       current: { max: 0.025, unit: 'A' },
@@ -73,11 +74,32 @@ const PARTS_DB = [
     alternativeTo: ['lm358'],
   },
   {
+    id: 'mcp6002',
+    partNumber: 'MCP6002',
+    name: 'デュアルオペアンプ',
+    category: 'ic',
+    manufacturer: 'Microchip',
+    pinoutId: 'dual-opamp-8pin',   // DIP-8/SOP-8 同一ピン配置
+    unitPriceJPY: 60,
+    specs: {
+      voltage: { min: 1.8, max: 6, unit: 'V' },
+      current: { max: 0.025, unit: 'A' },
+      tempRange: { min: -40, max: 125, unit: '℃' },
+      package: ['DIP', 'SOP'],
+      bandwidth: '1 MHz',
+      channels: 2,
+    },
+    description: '低電圧・低消費電流デュアルオペアンプ。動作電圧範囲に注意。',
+    alternativeTo: ['lm358'],
+  },
+  {
     id: 'ne555',
     partNumber: 'NE555',
     name: 'タイマーIC',
     category: 'ic',
     manufacturer: 'Texas Instruments',
+    pinoutId: 'timer-555-8pin',
+    unitPriceJPY: 30,
     specs: {
       voltage: { min: 4.5, max: 16, unit: 'V' },
       current: { max: 0.2, unit: 'A' },
@@ -94,6 +116,8 @@ const PARTS_DB = [
     name: 'タイマーIC',
     category: 'ic',
     manufacturer: 'Texas Instruments',
+    pinoutId: 'timer-555-8pin',    // NE555と同一ピン配置
+    unitPriceJPY: 40,
     specs: {
       voltage: { min: 4.5, max: 16, unit: 'V' },
       current: { max: 0.2, unit: 'A' },
@@ -101,7 +125,7 @@ const PARTS_DB = [
       package: ['DIP', 'SOP'],
       channels: 1,
     },
-    description: 'NE555の広温度範囲版。',
+    description: 'NE555の広温度範囲版。ピン完全互換。',
     alternativeTo: ['ne555'],
   },
   {
@@ -110,6 +134,8 @@ const PARTS_DB = [
     name: 'CMOSタイマーIC',
     category: 'ic',
     manufacturer: 'Texas Instruments',
+    pinoutId: 'timer-555-8pin',    // NE555と同一ピン配置
+    unitPriceJPY: 80,
     specs: {
       voltage: { min: 2, max: 15, unit: 'V' },
       current: { max: 0.1, unit: 'A' },
@@ -117,7 +143,7 @@ const PARTS_DB = [
       package: ['DIP', 'SOP'],
       channels: 1,
     },
-    description: 'CMOS版タイマーIC。低消費電流・低電圧動作。',
+    description: 'CMOS版タイマーIC。低消費電流・低電圧動作。ピン互換。',
     alternativeTo: ['ne555'],
   },
 
@@ -128,6 +154,8 @@ const PARTS_DB = [
     name: 'NPN汎用トランジスタ',
     category: 'transistor',
     manufacturer: 'Toshiba',
+    pinoutId: 'to92-ecb',          // TO-92: 平面側より E-C-B
+    unitPriceJPY: 20,
     specs: {
       voltage: { max: 50, unit: 'V' },
       current: { max: 0.15, unit: 'A' },
@@ -145,6 +173,8 @@ const PARTS_DB = [
     name: 'NPN汎用トランジスタ',
     category: 'transistor',
     manufacturer: 'Fairchild',
+    pinoutId: 'to92-cbe',          // TO-92: 平面側より C-B-E ← 2SC1815と異なる
+    unitPriceJPY: 15,
     specs: {
       voltage: { max: 45, unit: 'V' },
       current: { max: 0.1, unit: 'A' },
@@ -153,7 +183,7 @@ const PARTS_DB = [
       hFE: '110〜800',
       power: '0.5 W',
     },
-    description: 'NPN汎用トランジスタ。2SC1815の代替として広く使用。',
+    description: 'NPN汎用トランジスタ。2SC1815と特性は近いがピン順が異なるため要確認。',
     alternativeTo: ['2sc1815'],
   },
   {
@@ -161,7 +191,9 @@ const PARTS_DB = [
     partNumber: '2N3904',
     name: 'NPN汎用トランジスタ',
     category: 'transistor',
-    manufacturer: 'Fairchild',
+    manufacturer: 'ON Semiconductor',
+    pinoutId: 'to92-ebc',          // TO-92: 平面側より E-B-C ← 2SC1815と異なる
+    unitPriceJPY: 10,
     specs: {
       voltage: { max: 40, unit: 'V' },
       current: { max: 0.2, unit: 'A' },
@@ -170,7 +202,7 @@ const PARTS_DB = [
       hFE: '100〜300',
       power: '0.625 W',
     },
-    description: 'グローバル標準のNPN汎用トランジスタ。入手性が高い。',
+    description: 'グローバル標準NPN汎用トランジスタ。安価・入手容易。ピン順が異なるため要確認。',
     alternativeTo: ['2sc1815'],
   },
   {
@@ -179,6 +211,8 @@ const PARTS_DB = [
     name: 'PNP汎用トランジスタ',
     category: 'transistor',
     manufacturer: 'Toshiba',
+    pinoutId: 'to92-ecb-pnp',      // TO-92: E-C-B (PNP)
+    unitPriceJPY: 20,
     specs: {
       voltage: { max: 50, unit: 'V' },
       current: { max: 0.15, unit: 'A' },
@@ -198,6 +232,8 @@ const PARTS_DB = [
     name: '整流ダイオード',
     category: 'diode',
     manufacturer: 'Vishay',
+    pinoutId: 'diode-do41',        // DO-41: アノード/カソード標準
+    unitPriceJPY: 15,
     specs: {
       voltage: { max: 1000, unit: 'V' },
       current: { max: 1, unit: 'A' },
@@ -209,11 +245,31 @@ const PARTS_DB = [
     alternativeTo: [],
   },
   {
+    id: '1n5819',
+    partNumber: '1N5819',
+    name: 'ショットキーバリアダイオード',
+    category: 'diode',
+    manufacturer: 'Vishay',
+    pinoutId: 'diode-do41',        // DO-41: 1N4007と同一フットプリント
+    unitPriceJPY: 25,
+    specs: {
+      voltage: { max: 40, unit: 'V' },
+      current: { max: 1, unit: 'A' },
+      tempRange: { min: -55, max: 125, unit: '℃' },
+      package: ['DO-41'],
+      vf: '0.6 V',
+    },
+    description: '低順電圧降下ショットキーダイオード。DO-41フットプリントで1N4007と基板互換。',
+    alternativeTo: ['1n4007'],
+  },
+  {
     id: '1n4148',
     partNumber: '1N4148',
     name: 'スイッチングダイオード',
     category: 'diode',
     manufacturer: 'Vishay',
+    pinoutId: 'diode-do35',        // DO-35: 別パッケージ
+    unitPriceJPY: 10,
     specs: {
       voltage: { max: 100, unit: 'V' },
       current: { max: 0.3, unit: 'A' },
@@ -225,27 +281,13 @@ const PARTS_DB = [
     alternativeTo: [],
   },
   {
-    id: '1n5819',
-    partNumber: '1N5819',
-    name: 'ショットキーバリアダイオード',
-    category: 'diode',
-    manufacturer: 'Vishay',
-    specs: {
-      voltage: { max: 40, unit: 'V' },
-      current: { max: 1, unit: 'A' },
-      tempRange: { min: -55, max: 125, unit: '℃' },
-      package: ['DO-41'],
-      vf: '0.6 V',
-    },
-    description: '低順電圧降下ショットキーダイオード。スイッチング電源に最適。',
-    alternativeTo: ['1n4007'],
-  },
-  {
     id: 'ss14',
     partNumber: 'SS14',
     name: 'SMDショットキーダイオード',
     category: 'diode',
     manufacturer: 'Vishay',
+    pinoutId: 'diode-sma',         // SMA: 別パッケージ
+    unitPriceJPY: 30,
     specs: {
       voltage: { max: 40, unit: 'V' },
       current: { max: 1, unit: 'A' },
@@ -253,33 +295,19 @@ const PARTS_DB = [
       package: ['SMA'],
       vf: '0.5 V',
     },
-    description: '1N5819のSMD版。',
+    description: '1N5819のSMD版。パッケージが異なるため基板変更が必要。',
     alternativeTo: ['1n4007', '1n5819'],
   },
 
   // ── MOSFET ─────────────────────────────────
-  {
-    id: '2n7000',
-    partNumber: '2N7000',
-    name: 'N-ch MOSFET',
-    category: 'mosfet',
-    manufacturer: 'Fairchild',
-    specs: {
-      voltage: { max: 60, unit: 'V' },
-      current: { max: 0.115, unit: 'A' },
-      tempRange: { min: -55, max: 150, unit: '℃' },
-      package: ['TO-92'],
-      rdsOn: '5 Ω',
-    },
-    description: '小信号N-chMOSFET。ロジック回路のスイッチングに使用。',
-    alternativeTo: [],
-  },
   {
     id: 'irf540',
     partNumber: 'IRF540',
     name: 'N-ch パワーMOSFET',
     category: 'mosfet',
     manufacturer: 'Infineon',
+    pinoutId: 'mosfet-to220-gds',  // TO-220: G-D-S
+    unitPriceJPY: 100,
     specs: {
       voltage: { max: 100, unit: 'V' },
       current: { max: 28, unit: 'A' },
@@ -297,6 +325,8 @@ const PARTS_DB = [
     name: 'N-ch パワーMOSFET (改良版)',
     category: 'mosfet',
     manufacturer: 'Infineon',
+    pinoutId: 'mosfet-to220-gds',  // TO-220: IRF540と同一ピン配置
+    unitPriceJPY: 120,
     specs: {
       voltage: { max: 100, unit: 'V' },
       current: { max: 33, unit: 'A' },
@@ -305,56 +335,99 @@ const PARTS_DB = [
       rdsOn: '0.052 Ω',
       power: '150 W',
     },
-    description: 'IRF540の改良版。低オン抵抗。',
+    description: 'IRF540の改良版。低オン抵抗。ピン完全互換で基板変更不要。',
     alternativeTo: ['irf540'],
   },
+  {
+    id: '2n7000',
+    partNumber: '2N7000',
+    name: 'N-ch MOSFET (小信号)',
+    category: 'mosfet',
+    manufacturer: 'ON Semiconductor',
+    pinoutId: 'mosfet-to92-sgd',   // TO-92: S-G-D (IRF540と別パッケージ)
+    unitPriceJPY: 60,
+    specs: {
+      voltage: { max: 60, unit: 'V' },
+      current: { max: 0.115, unit: 'A' },
+      tempRange: { min: -55, max: 150, unit: '℃' },
+      package: ['TO-92'],
+      rdsOn: '5 Ω',
+    },
+    description: '小信号N-chMOSFET。ロジック回路のスイッチングに使用。',
+    alternativeTo: [],
+  },
 ];
+
+// =============================================
+// ピンコンパチ判定
+// =============================================
+
+/**
+ * 2部品がピンコンパチかどうかを判定する。
+ * 条件: ① 同一 pinoutId  ② 少なくとも1つ共通パッケージ
+ * → 両方を満たせば基板変更なしに差し替え可能。
+ */
+function isPinCompatible(a, b) {
+  if (!a.pinoutId || !b.pinoutId) return false;
+  if (a.pinoutId !== b.pinoutId) return false;
+  const pkgA = a.specs.package ?? [];
+  const pkgB = b.specs.package ?? [];
+  return pkgA.some(p => pkgB.includes(p));
+}
+
+// =============================================
+// コストランク
+// =============================================
+
+function costRank(part) {
+  const p = part.unitPriceJPY ?? 999;
+  if (p <= 20)  return { label: '¥',   cls: 'cost-low',  title: `参考単価 ${p}円` };
+  if (p <= 60)  return { label: '¥¥',  cls: 'cost-mid',  title: `参考単価 ${p}円` };
+  return        { label: '¥¥¥', cls: 'cost-high', title: `参考単価 ${p}円` };
+}
 
 // =============================================
 // 代替品スコアリング
 // =============================================
 
-function computeCompatibility(original, candidate) {
-  if (original.id === candidate.id) return -1; // 同じ部品は除外
-  if (candidate.alternativeTo.includes(original.id) || original.alternativeTo.includes(candidate.id)) {
-    return 95 + Math.floor(Math.random() * 5);
-  }
+/**
+ * 電気的スペックの適合度を 0〜100 で返す。
+ * ピンコンパチかどうかは別途 isPinCompatible() で判定し、
+ * ソート順は searchParts() が制御する。
+ */
+function electricalScore(original, candidate) {
+  if (original.id === candidate.id) return -1;
   if (candidate.category !== original.category) return -1;
 
-  let score = 50;
+  let score = 40; // ベース
 
-  // 電圧マージン
+  // 電圧: 候補が元部品の最大電圧を満たすこと
   const origV = original.specs.voltage?.max ?? 0;
   const candV = candidate.specs.voltage?.max ?? 0;
-  if (candV >= origV) score += 20;
+  if (candV >= origV)         score += 30;
   else if (candV >= origV * 0.9) score += 10;
-  else score -= 20;
+  else                        score -= 40; // 電圧不足は致命的
 
-  // 電流
+  // 電流: 候補が元部品の最大電流を満たすこと
   const origI = original.specs.current?.max ?? 0;
   const candI = candidate.specs.current?.max ?? 0;
-  if (candI >= origI) score += 15;
-  else if (candI >= origI * 0.8) score += 5;
-  else score -= 15;
-
-  // パッケージ共通チェック
-  const origPkg = original.specs.package ?? [];
-  const candPkg = candidate.specs.package ?? [];
-  if (origPkg.some(p => candPkg.includes(p))) score += 15;
+  if (candI >= origI)         score += 20;
+  else if (candI >= origI * 0.8) score += 8;
+  else                        score -= 20;
 
   // 温度範囲
   const origTmax = original.specs.tempRange?.max ?? 0;
   const candTmax = candidate.specs.tempRange?.max ?? 0;
-  if (candTmax >= origTmax) score += 10;
+  if (candTmax >= origTmax)   score += 10;
 
   return Math.min(99, Math.max(0, score));
 }
 
-function getCompatibilityLabel(score) {
-  if (score >= 90) return { label: '◎ 完全互換', cls: 'compat-full' };
-  if (score >= 70) return { label: '○ 高互換性', cls: 'compat-high' };
-  if (score >= 50) return { label: '△ 条件付き', cls: 'compat-cond' };
-  return { label: '✕ 非互換', cls: 'compat-none' };
+function electricalLabel(score) {
+  if (score >= 90) return { label: '電気的: 優', cls: 'elec-great' };
+  if (score >= 70) return { label: '電気的: 良', cls: 'elec-good' };
+  if (score >= 50) return { label: '電気的: 可', cls: 'elec-fair' };
+  return                  { label: '電気的: 要注意', cls: 'elec-poor' };
 }
 
 // =============================================
@@ -363,52 +436,66 @@ function getCompatibilityLabel(score) {
 
 function searchParts(query, filters) {
   const q = query.trim().toLowerCase();
-  if (!q) return [];
+  if (!q) return null;
 
-  // 元部品を特定
+  // 元部品を特定 (完全一致優先 → 部分一致)
   let original = PARTS_DB.find(p =>
     p.partNumber.toLowerCase() === q ||
     p.partNumber.toLowerCase().replace(/\s/g, '') === q.replace(/\s/g, '')
   );
-
-  // 見つからない場合は部分一致
   if (!original) {
     original = PARTS_DB.find(p =>
       p.partNumber.toLowerCase().includes(q) || q.includes(p.partNumber.toLowerCase())
     );
   }
 
-  // カテゴリ絞り込み
+  // スペックフィルタ適用
   const catFilter = filters.category;
   const pkgFilter = filters.package;
-
-  let results = PARTS_DB.filter(p => {
+  let pool = PARTS_DB.filter(p => {
     if (catFilter && p.category !== catFilter) return false;
     if (pkgFilter && !(p.specs.package ?? []).includes(pkgFilter)) return false;
     if (filters.voltageMax && (p.specs.voltage?.max ?? 0) < parseFloat(filters.voltageMax)) return false;
     if (filters.currentMax && (p.specs.current?.max ?? 0) < parseFloat(filters.currentMax)) return false;
-    if (filters.tempRange && (p.specs.tempRange?.max ?? 0) < parseFloat(filters.tempRange)) return false;
+    if (filters.tempRange  && (p.specs.tempRange?.max ?? 0) < parseFloat(filters.tempRange)) return false;
     return true;
   });
 
   if (original) {
-    // スコアリングして代替品を返す
-    return {
-      original,
-      substitutes: results
-        .map(p => ({ ...p, score: computeCompatibility(original, p) }))
-        .filter(p => p.score >= 0)
-        .sort((a, b) => b.score - a.score),
-    };
+    const candidates = pool
+      .map(p => {
+        const eScore = electricalScore(original, p);
+        if (eScore < 0) return null;
+        return {
+          ...p,
+          pinCompatible: isPinCompatible(original, p),
+          eScore,
+        };
+      })
+      .filter(Boolean);
+
+    // ── ソート: ① ピンコンパチ優先  ② コスト昇順  ③ 電気スコア降順 ──
+    candidates.sort((a, b) => {
+      if (a.pinCompatible !== b.pinCompatible) return b.pinCompatible - a.pinCompatible;
+      const costA = a.unitPriceJPY ?? 999;
+      const costB = b.unitPriceJPY ?? 999;
+      if (costA !== costB) return costA - costB;
+      return b.eScore - a.eScore;
+    });
+
+    return { original, substitutes: candidates };
   }
 
-  // 部品が特定できなければフリーワード検索
-  const freeResults = results.filter(p =>
+  // 元部品が特定できない場合: フリーワード検索
+  const freeResults = pool.filter(p =>
     p.partNumber.toLowerCase().includes(q) ||
     p.name.toLowerCase().includes(q) ||
     p.description.toLowerCase().includes(q)
   );
-  return { original: null, substitutes: freeResults.map(p => ({ ...p, score: null })) };
+  return {
+    original: null,
+    substitutes: freeResults.map(p => ({ ...p, pinCompatible: null, eScore: null })),
+  };
 }
 
 // =============================================
@@ -422,25 +509,47 @@ function specRow(label, value) {
 
 function formatVoltage(spec) {
   if (!spec) return null;
-  if (spec.min !== undefined) return `${spec.min}〜${spec.max} ${spec.unit}`;
-  return `${spec.max} ${spec.unit}`;
+  return spec.min !== undefined ? `${spec.min}〜${spec.max} ${spec.unit}` : `${spec.max} ${spec.unit}`;
 }
 
-function renderPartCard(part, isOriginal = false, score = null) {
-  const compat = score !== null ? getCompatibilityLabel(score) : null;
+function categoryLabel(cat) {
+  const map = {
+    ic: 'IC', resistor: '抵抗', capacitor: 'コンデンサ',
+    transistor: 'トランジスタ', diode: 'ダイオード', mosfet: 'MOSFET',
+  };
+  return map[cat] || cat;
+}
+
+function renderPartCard(part, isOriginal = false) {
   const pkgs = (part.specs.package ?? []).join(', ');
+  const elec = part.eScore !== null && part.eScore !== undefined ? electricalLabel(part.eScore) : null;
+  const cost = costRank(part);
+
+  // ピンコンパチバッジ
+  let pinBadge = '';
+  if (!isOriginal && part.pinCompatible === true) {
+    pinBadge = `<span class="pin-badge pin-badge--ok" title="同一ピン配置・同一パッケージ。基板変更なしに差し替え可能">✓ 基板変更不要</span>`;
+  } else if (!isOriginal && part.pinCompatible === false) {
+    pinBadge = `<span class="pin-badge pin-badge--ng" title="ピン配置またはパッケージが異なります">⚠ 要基板確認</span>`;
+  }
 
   return `
     <div class="part-card ${isOriginal ? 'part-card--original' : ''}" data-id="${part.id}">
       <div class="part-card-header">
-        <div>
+        <div class="part-card-title">
           <span class="part-number">${part.partNumber}</span>
           <span class="category-badge category-${part.category}">${categoryLabel(part.category)}</span>
         </div>
-        ${compat ? `<span class="compat-badge ${compat.cls}" title="互換性スコア: ${score}%">${compat.label} (${score}%)</span>` : ''}
+        <div class="part-card-badges">
+          ${pinBadge}
+          ${!isOriginal ? `<span class="cost-badge ${cost.cls}" title="${cost.title}">${cost.label}</span>` : ''}
+          ${elec ? `<span class="elec-badge ${elec.cls}">${elec.label}</span>` : ''}
+        </div>
       </div>
       <p class="part-name">${part.name}</p>
-      <p class="part-manufacturer">📦 ${part.manufacturer}</p>
+      <p class="part-manufacturer">📦 ${part.manufacturer}
+        ${!isOriginal && part.unitPriceJPY ? `<span class="price-tag">約${part.unitPriceJPY}円</span>` : ''}
+      </p>
       <div class="spec-grid">
         ${specRow('最大電圧', formatVoltage(part.specs.voltage))}
         ${specRow('最大電流', part.specs.current ? `${part.specs.current.max} ${part.specs.current.unit}` : null)}
@@ -457,16 +566,12 @@ function renderPartCard(part, isOriginal = false, score = null) {
   `;
 }
 
-function categoryLabel(cat) {
-  const map = { ic: 'IC', resistor: '抵抗', capacitor: 'コンデンサ', transistor: 'トランジスタ', diode: 'ダイオード', mosfet: 'MOSFET' };
-  return map[cat] || cat;
-}
-
 function renderResults(result) {
   const { original, substitutes } = result;
 
   document.getElementById('resultCount').textContent = `${substitutes.length}件`;
 
+  // 元部品
   if (original) {
     document.getElementById('originalPartCard').style.display = 'block';
     document.getElementById('originalPartInfo').innerHTML = renderPartCard(original, true);
@@ -479,10 +584,45 @@ function renderResults(result) {
     return;
   }
 
-  document.getElementById('substituteList').innerHTML = substitutes
-    .map(p => renderPartCard(p, false, p.score))
-    .join('');
+  // ── ピンコンパチ / 要確認 を2セクションに分けて表示 ──
+  const pinOk  = substitutes.filter(p => p.pinCompatible === true);
+  const pinNg  = substitutes.filter(p => p.pinCompatible !== true);
 
+  let html = '';
+
+  if (pinOk.length > 0) {
+    html += `
+      <div class="result-section">
+        <div class="result-section-header result-section-header--ok">
+          <span class="section-icon">✓</span>
+          <div>
+            <h3>基板変更不要の代替品 <span class="section-count">${pinOk.length}件</span></h3>
+            <p>同一ピン配置・同一パッケージ。そのまま差し替え可能。コスト順で表示。</p>
+          </div>
+        </div>
+        <div class="substitute-list">
+          ${pinOk.map(p => renderPartCard(p)).join('')}
+        </div>
+      </div>`;
+  }
+
+  if (pinNg.length > 0) {
+    html += `
+      <div class="result-section ${pinOk.length > 0 ? 'result-section--secondary' : ''}">
+        <div class="result-section-header result-section-header--ng">
+          <span class="section-icon">⚠</span>
+          <div>
+            <h3>要基板確認の代替品 <span class="section-count">${pinNg.length}件</span></h3>
+            <p>ピン配置またはパッケージが異なります。使用には基板修正・向き確認が必要です。</p>
+          </div>
+        </div>
+        <div class="substitute-list">
+          ${pinNg.map(p => renderPartCard(p)).join('')}
+        </div>
+      </div>`;
+  }
+
+  document.getElementById('substituteList').innerHTML = html;
   showState('results');
 }
 
@@ -493,11 +633,13 @@ function renderResults(result) {
 function exportCSV(result) {
   const { original, substitutes } = result;
   const rows = [
-    ['役割', '部品番号', 'メーカー', 'カテゴリ', '最大電圧(V)', '最大電流(A)', '温度範囲(℃)', 'パッケージ', '互換性スコア', '説明'],
+    ['役割', '部品番号', 'メーカー', 'カテゴリ', '基板変更', '参考単価(円)',
+     '最大電圧(V)', '最大電流(A)', '温度範囲(℃)', 'パッケージ', '電気スコア', '説明'],
   ];
   if (original) {
     rows.push([
       '元部品', original.partNumber, original.manufacturer, categoryLabel(original.category),
+      '', original.unitPriceJPY ?? '',
       original.specs.voltage?.max ?? '', original.specs.current?.max ?? '',
       original.specs.tempRange ? `${original.specs.tempRange.min}〜${original.specs.tempRange.max}` : '',
       (original.specs.package ?? []).join('/'), '', original.description,
@@ -506,9 +648,13 @@ function exportCSV(result) {
   substitutes.forEach(p => {
     rows.push([
       '代替品', p.partNumber, p.manufacturer, categoryLabel(p.category),
+      p.pinCompatible === true ? '不要' : '要確認',
+      p.unitPriceJPY ?? '',
       p.specs.voltage?.max ?? '', p.specs.current?.max ?? '',
       p.specs.tempRange ? `${p.specs.tempRange.min}〜${p.specs.tempRange.max}` : '',
-      (p.specs.package ?? []).join('/'), p.score !== null ? `${p.score}%` : '', p.description,
+      (p.specs.package ?? []).join('/'),
+      p.eScore !== null && p.eScore !== undefined ? `${p.eScore}%` : '',
+      p.description,
     ]);
   });
 
@@ -551,6 +697,8 @@ function openModal(partId) {
   const part = PARTS_DB.find(p => p.id === partId);
   if (!part) return;
 
+  const cost = costRank(part);
+
   document.getElementById('modalTitle').textContent = `${part.partNumber} — 詳細情報`;
   document.getElementById('modalBody').innerHTML = `
     <div class="modal-specs">
@@ -558,6 +706,8 @@ function openModal(partId) {
       <div class="spec-grid spec-grid--modal">
         ${specRow('メーカー', part.manufacturer)}
         ${specRow('カテゴリ', categoryLabel(part.category))}
+        ${specRow('ピン配置ID', part.pinoutId || null)}
+        ${specRow('参考単価', part.unitPriceJPY ? `約${part.unitPriceJPY}円` : null)}
         ${specRow('最大電圧', formatVoltage(part.specs.voltage))}
         ${specRow('最大電流', part.specs.current ? `${part.specs.current.max} ${part.specs.current.unit}` : null)}
         ${specRow('動作温度', part.specs.tempRange ? `${part.specs.tempRange.min}〜${part.specs.tempRange.max} ${part.specs.tempRange.unit}` : null)}
@@ -569,7 +719,9 @@ function openModal(partId) {
         ${specRow('消費電力', part.specs.power || null)}
         ${specRow('順電圧降下', part.specs.vf || null)}
       </div>
-      ${part.alternativeTo.length > 0 ? `<p class="alt-info">代替元: ${part.alternativeTo.map(id => PARTS_DB.find(p => p.id === id)?.partNumber ?? id).join(', ')}</p>` : ''}
+      ${part.alternativeTo.length > 0
+        ? `<p class="alt-info">代替元: ${part.alternativeTo.map(id => PARTS_DB.find(p => p.id === id)?.partNumber ?? id).join(', ')}</p>`
+        : ''}
     </div>
   `;
   document.getElementById('modalOverlay').style.display = 'flex';
@@ -581,11 +733,11 @@ function openModal(partId) {
 
 function getFilters() {
   return {
-    category: document.getElementById('category').value,
-    package: document.getElementById('package').value,
+    category:   document.getElementById('category').value,
+    package:    document.getElementById('package').value,
     voltageMax: document.getElementById('voltageMax').value,
     currentMax: document.getElementById('currentMax').value,
-    tempRange: document.getElementById('tempRange').value,
+    tempRange:  document.getElementById('tempRange').value,
   };
 }
 
@@ -597,7 +749,7 @@ function doSearch() {
 
   setTimeout(() => {
     const result = searchParts(q, getFilters());
-    if (!result || result.substitutes.length === 0 && !result.original) {
+    if (!result || (result.substitutes.length === 0 && !result.original)) {
       showState('notFound');
       return;
     }
@@ -610,11 +762,9 @@ document.addEventListener('DOMContentLoaded', () => {
   showState('emptyState');
 
   document.getElementById('searchBtn').addEventListener('click', doSearch);
-
   document.getElementById('partNumber').addEventListener('keydown', e => {
     if (e.key === 'Enter') doSearch();
   });
-
   document.getElementById('exportBtn').addEventListener('click', () => {
     if (lastResult) exportCSV(lastResult);
   });
@@ -627,11 +777,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 詳細ボタン（委譲）
+  // 詳細ボタン (イベント委譲)
   document.addEventListener('click', e => {
-    if (e.target.classList.contains('detail-btn')) {
-      openModal(e.target.dataset.id);
-    }
+    if (e.target.classList.contains('detail-btn')) openModal(e.target.dataset.id);
   });
 
   // モーダルを閉じる

@@ -172,6 +172,70 @@ body {
   padding: 0;
 }
 
+/* ─── Result sections (基板変更不要 / 要確認) ─── */
+.result-section { margin-bottom: 32px; }
+.result-section--secondary { margin-top: 8px; }
+
+.result-section-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 18px;
+  border-radius: var(--radius) var(--radius) 0 0;
+  margin-bottom: 0;
+  border-bottom: none;
+}
+.result-section-header--ok {
+  background: #f0fdf4;
+  border: 2px solid #bbf7d0;
+  border-bottom: none;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+.result-section-header--ng {
+  background: #fffbeb;
+  border: 2px solid #fde68a;
+  border-bottom: none;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+.result-section-header .section-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+  margin-top: 2px;
+}
+.result-section-header h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--gray-800);
+  margin-bottom: 3px;
+}
+.result-section-header--ok h3 { color: #15803d; }
+.result-section-header--ng h3 { color: #92400e; }
+.result-section-header p {
+  font-size: .82rem;
+  color: var(--gray-600);
+  line-height: 1.4;
+}
+.section-count {
+  font-size: .8rem;
+  font-weight: 600;
+  padding: 1px 8px;
+  border-radius: 12px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+.result-section-header--ok .section-count { background: #bbf7d0; color: #15803d; }
+.result-section-header--ng .section-count { background: #fde68a; color: #92400e; }
+
+.result-section .substitute-list {
+  border: 2px solid var(--gray-200);
+  border-top: none;
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: 16px;
+  background: #fff;
+}
+.result-section-header--ok + .substitute-list { border-color: #bbf7d0; }
+.result-section-header--ng + .substitute-list { border-color: #fde68a; }
+
 /* ─── Part cards ──────────────────────────────── */
 .substitute-list {
   display: grid;
@@ -195,10 +259,19 @@ body {
 }
 .part-card-header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 6px;
+}
+.part-card-title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.part-card-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
 }
 .part-number {
   font-size: 1.15rem;
@@ -226,18 +299,54 @@ body {
 .category-diode   { background: #fee2e2; color: #7f1d1d; }
 .category-mosfet  { background: #fce7f3; color: #831843; }
 
-/* Compat badge */
-.compat-badge {
+/* ── ピンコンパチバッジ ── */
+.pin-badge {
   font-size: .75rem;
   font-weight: 700;
   padding: 3px 10px;
   border-radius: 20px;
   white-space: nowrap;
 }
-.compat-full { background: #d1fae5; color: var(--success); }
-.compat-high { background: #dbeafe; color: var(--primary); }
-.compat-cond { background: #fef3c7; color: var(--warning); }
-.compat-none { background: #fee2e2; color: var(--danger); }
+.pin-badge--ok  { background: #d1fae5; color: #15803d; }
+.pin-badge--ng  { background: #fef3c7; color: #92400e; }
+
+/* ── コストバッジ ── */
+.cost-badge {
+  font-size: .75rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+  font-family: 'Courier New', monospace;
+  cursor: default;
+}
+.cost-low  { background: #dbeafe; color: #1d4ed8; }   /* 安い */
+.cost-mid  { background: #f1f5f9; color: var(--gray-600); }
+.cost-high { background: #fee2e2; color: var(--danger); } /* 高い */
+
+/* ── 電気スコアバッジ ── */
+.elec-badge {
+  font-size: .7rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.elec-great { background: #d1fae5; color: #15803d; }
+.elec-good  { background: #dbeafe; color: #1d4ed8; }
+.elec-fair  { background: #fef3c7; color: #92400e; }
+.elec-poor  { background: #fee2e2; color: var(--danger); }
+
+/* ── 単価表示 ── */
+.price-tag {
+  margin-left: 8px;
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--primary);
+  background: #eff6ff;
+  padding: 1px 7px;
+  border-radius: 4px;
+}
 
 /* Spec grid */
 .spec-grid {
@@ -358,4 +467,5 @@ body {
   .search-row { flex-direction: column; }
   .btn-primary { width: 100%; }
   .substitute-list { grid-template-columns: 1fr; }
+  .result-section-header { flex-direction: column; gap: 8px; }
 }
