@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>電子回路検証ツール</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 800px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 2em;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1em;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1em;
+            color: #555;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .input-section {
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            resize: vertical;
+            transition: border-color 0.3s;
+            color: #333;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .file-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .file-label {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #f0f0f0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            color: #555;
+            border: 2px solid #e0e0e0;
+            transition: all 0.2s;
+        }
+
+        .file-label:hover {
+            background-color: #e8e8e8;
+            border-color: #bbb;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        #fileName {
+            color: #888;
+            font-size: 0.85em;
+        }
+
+        .btn-verify {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 16px;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+
+        .btn-verify:hover {
+            opacity: 0.9;
+        }
+
+        .btn-verify:active {
+            transform: scale(0.99);
+        }
+
+        .result-section {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .result-section.visible {
+            display: block;
+        }
+
+        .summary {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            background: #f9f9f9;
+        }
+
+        .badge {
+            font-size: 1.3em;
+            font-weight: bold;
+            padding: 8px 20px;
+            border-radius: 8px;
+            color: white;
+            white-space: nowrap;
+        }
+
+        .badge.pass {
+            background: #4caf50;
+        }
+
+        .badge.fail {
+            background: #f44336;
+        }
+
+        .summary-text {
+            font-size: 0.95em;
+            color: #444;
+        }
+
+        .issue-list {
+            margin-bottom: 24px;
+        }
+
+        .issue-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        .issue-item.error {
+            background: #fff5f5;
+            border-left: 4px solid #f44336;
+        }
+
+        .issue-item.warning {
+            background: #fffbf0;
+            border-left: 4px solid #ff9800;
+        }
+
+        .issue-tag {
+            font-weight: bold;
+            font-size: 0.8em;
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: white;
+            white-space: nowrap;
+            margin-top: 1px;
+        }
+
+        .issue-tag.error {
+            background: #f44336;
+        }
+
+        .issue-tag.warning {
+            background: #ff9800;
+        }
+
+        .component-list {
+            background: #f5f5f5;
+            border-radius: 10px;
+            padding: 16px 20px;
+        }
+
+        .component-list-title {
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 12px;
+            font-size: 0.95em;
+        }
+
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px;
+        }
+
+        .component-card {
+            background: white;
+            border-radius: 8px;
+            padding: 10px 14px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+            font-size: 0.85em;
+        }
+
+        .component-id {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 2px;
+        }
+
+        .component-type {
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        .component-value {
+            color: #555;
+            font-size: 0.9em;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid #eee;
+            margin: 20px 0;
+        }
+
+        .sample-section {
+            margin-top: 24px;
+        }
+
+        .sample-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .btn-sample {
+            padding: 8px 16px;
+            border: 2px solid #667eea;
+            color: #667eea;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.2s;
+        }
+
+        .btn-sample:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .error-msg {
+            color: #f44336;
+            font-size: 0.9em;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ 電子回路検証ツール</h1>
+        <p class="subtitle">JSON ネットリストを入力して、接続の正確さを検証します</p>
+
+        <div class="input-section">
+            <div class="section-title">JSON ネットリストを入力</div>
+            <textarea id="jsonInput" placeholder='{"components": [...], "connections": [...]}'></textarea>
+            <p id="parseError" class="error-msg" style="display:none;"></p>
+
+            <div class="file-row">
+                <label class="file-label" for="fileInput">📂 ファイルを選択</label>
+                <input type="file" id="fileInput" accept=".json">
+                <span id="fileName">ファイル未選択</span>
+            </div>
+        </div>
+
+        <button class="btn-verify" id="verifyBtn">🔍 回路を検証する</button>
+
+        <div class="sample-section">
+            <div class="section-title">サンプルを読み込む</div>
+            <div class="sample-buttons">
+                <button class="btn-sample" onclick="loadSample('normal')">✅ 正常回路</button>
+                <button class="btn-sample" onclick="loadSample('short')">⚡ ショート回路</button>
+                <button class="btn-sample" onclick="loadSample('floating')">🔌 浮遊ピンあり</button>
+                <button class="btn-sample" onclick="loadSample('digital')">🔲 デジタル回路</button>
+            </div>
+        </div>
+
+        <div class="result-section" id="resultSection">
+            <hr class="divider">
+            <div class="summary" id="summary">
+                <span class="badge" id="badge"></span>
+                <span class="summary-text" id="summaryText"></span>
+            </div>
+
+            <div class="issue-list" id="issueList"></div>
+
+            <div class="component-list" id="componentList"></div>
+        </div>
+    </div>
+
+    <script>
+        // ─── サンプルデータ ───────────────────────────────────────────
+        const SAMPLES = {
+            normal: {
+                components: [
+                    { id: "VCC1", type: "power", value: "5V", pins: ["pin1"] },
+                    { id: "R1", type: "resistor", value: "1kΩ", pins: ["A", "B"] },
+                    { id: "R2", type: "resistor", value: "2kΩ", pins: ["A", "B"] },
+                    { id: "C1", type: "capacitor", value: "100uF", pins: ["A", "B"] },
+                    { id: "GND1", type: "ground", pins: ["pin1"] }
+                ],
+                connections: [
+                    { from: "VCC1.pin1", to: "R1.A" },
+                    { from: "R1.B", to: "R2.A" },
+                    { from: "R2.B", to: "C1.A" },
+                    { from: "C1.B", to: "GND1.pin1" }
+                ]
+            },
+            short: {
+                components: [
+                    { id: "VCC1", type: "power", value: "5V", pins: ["pin1"] },
+                    { id: "GND1", type: "ground", pins: ["pin1"] }
+                ],
+                connections: [
+                    { from: "VCC1.pin1", to: "GND1.pin1" }
+                ]
+            },
+            floating: {
+                components: [
+                    { id: "VCC1", type: "power", value: "3.3V", pins: ["pin1"] },
+                    { id: "AND1", type: "and_gate", pins: ["in1", "in2", "out"] },
+                    { id: "GND1", type: "ground", pins: ["pin1"] }
+                ],
+                connections: [
+                    { from: "VCC1.pin1", to: "AND1.in1" },
+                    { from: "AND1.out", to: "GND1.pin1" }
+                ]
+            },
+            digital: {
+                components: [
+                    { id: "VCC1", type: "power", value: "5V", pins: ["pin1"] },
+                    { id: "NOT1", type: "not_gate", pins: ["in", "out"] },
+                    { id: "AND1", type: "and_gate", pins: ["in1", "in2", "out"] },
+                    { id: "R1", type: "resistor", value: "10kΩ", pins: ["A", "B"] },
+                    { id: "GND1", type: "ground", pins: ["pin1"] }
+                ],
+                connections: [
+                    { from: "VCC1.pin1", to: "R1.A" },
+                    { from: "R1.B", to: "NOT1.in" },
+                    { from: "NOT1.out", to: "AND1.in1" },
+                    { from: "VCC1.pin1", to: "AND1.in2" },
+                    { from: "AND1.out", to: "GND1.pin1" }
+                ]
+            }
+        };
+
+        function loadSample(key) {
+            document.getElementById('jsonInput').value = JSON.stringify(SAMPLES[key], null, 2);
+            document.getElementById('parseError').style.display = 'none';
+        }
+
+        // ─── ファイル読み込み ──────────────────────────────────────────
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            document.getElementById('fileName').textContent = file.name;
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                document.getElementById('jsonInput').value = ev.target.result;
+                document.getElementById('parseError').style.display = 'none';
+            };
+            reader.readAsText(file);
+        });
+
+        // ─── 部品タイプ定義 ───────────────────────────────────────────
+        const POWER_TYPES = new Set(['power', 'vcc']);
+        const GROUND_TYPES = new Set(['ground', 'gnd']);
+        // ショート判定: これらを通過してもゼロ抵抗とみなす（受動素子を経由しない経路）
+        const PASSIVE_TYPES = new Set(['resistor', 'capacitor', 'inductor']);
+
+        // ─── 検証ロジック ─────────────────────────────────────────────
+
+        function buildComponentMap(components) {
+            const map = new Map();
+            for (const comp of components) {
+                map.set(comp.id, comp);
+            }
+            return map;
+        }
+
+        function parsePin(pinStr) {
+            const dot = pinStr.indexOf('.');
+            if (dot === -1) return null;
+            return { compId: pinStr.slice(0, dot), pinName: pinStr.slice(dot + 1) };
+        }
+
+        function checkInvalidReferences(netlist, compMap) {
+            const issues = [];
+            for (const conn of netlist.connections) {
+                for (const side of ['from', 'to']) {
+                    const parsed = parsePin(conn[side]);
+                    if (!parsed) {
+                        issues.push({ severity: 'ERROR', message: `接続 "${conn[side]}" の形式が不正です（"部品ID.ピン名" の形式で記述してください）` });
+                        continue;
+                    }
+                    const comp = compMap.get(parsed.compId);
+                    if (!comp) {
+                        issues.push({ severity: 'ERROR', message: `接続 "${conn[side]}" で参照されている部品 "${parsed.compId}" が存在しません` });
+                        continue;
+                    }
+                    if (!comp.pins.includes(parsed.pinName)) {
+                        issues.push({ severity: 'ERROR', message: `部品 "${parsed.compId}" にピン "${parsed.pinName}" は存在しません（利用可能: ${comp.pins.join(', ')}）` });
+                    }
+                }
+            }
+            return issues;
+        }
+
+        function checkDuplicateConnections(netlist) {
+            const issues = [];
+            const seen = new Set();
+            for (const conn of netlist.connections) {
+                const key1 = `${conn.from}|${conn.to}`;
+                const key2 = `${conn.to}|${conn.from}`;
+                if (seen.has(key1) || seen.has(key2)) {
+                    issues.push({ severity: 'WARNING', message: `接続 "${conn.from}" ↔ "${conn.to}" が重複して定義されています` });
+                } else {
+                    seen.add(key1);
+                }
+            }
+            return issues;
+        }
+
+        function checkFloatingPins(netlist, compMap) {
+            const issues = [];
+            const connectedPins = new Set();
+            for (const conn of netlist.connections) {
+                connectedPins.add(conn.from);
+                connectedPins.add(conn.to);
+            }
+            for (const comp of netlist.components) {
+                for (const pin of comp.pins) {
+                    const key = `${comp.id}.${pin}`;
+                    if (!connectedPins.has(key)) {
+                        issues.push({ severity: 'WARNING', message: `部品 "${comp.id}" のピン "${pin}" が未接続（浮遊ピン）です` });
+                    }
+                }
+            }
+            return issues;
+        }
+
+        function checkShortCircuit(netlist, compMap) {
+            const issues = [];
+
+            // ワイヤグラフを構築（接続リストをそのまま使う）
+            // ショート = VCC ノードから GND ノードへ受動素子を経由せずに到達できる
+            // ノード = "compId.pinName"
+            // 同一部品の異なるピン間の内部接続は、受動素子以外のすべての部品（ゲート等）で通過可能
+
+            // 隣接リスト（ワイヤエッジのみ）
+            const wireAdj = new Map(); // pin -> [pin]
+
+            function addEdge(a, b) {
+                if (!wireAdj.has(a)) wireAdj.set(a, []);
+                if (!wireAdj.has(b)) wireAdj.set(b, []);
+                wireAdj.get(a).push(b);
+                wireAdj.get(b).push(a);
+            }
+
+            for (const conn of netlist.connections) {
+                addEdge(conn.from, conn.to);
+            }
+
+            // 部品内部接続（受動素子を除く — 受動素子は抵抗になるため短絡経路にならない）
+            for (const comp of netlist.components) {
+                if (PASSIVE_TYPES.has(comp.type.toLowerCase())) continue;
+                // 内部的にすべてのピンを接続（ショート経路として扱う）
+                for (let i = 0; i < comp.pins.length; i++) {
+                    for (let j = i + 1; j < comp.pins.length; j++) {
+                        addEdge(`${comp.id}.${comp.pins[i]}`, `${comp.id}.${comp.pins[j]}`);
+                    }
+                }
+            }
+
+            // VCC / GND ノードを収集
+            const vccNodes = [];
+            const gndNodes = [];
+            for (const comp of netlist.components) {
+                const t = comp.type.toLowerCase();
+                if (POWER_TYPES.has(t)) {
+                    for (const pin of comp.pins) vccNodes.push(`${comp.id}.${pin}`);
+                } else if (GROUND_TYPES.has(t)) {
+                    for (const pin of comp.pins) gndNodes.push(`${comp.id}.${pin}`);
+                }
+            }
+
+            const gndSet = new Set(gndNodes);
+
+            for (const startNode of vccNodes) {
+                // BFS
+                const visited = new Set();
+                const queue = [startNode];
+                visited.add(startNode);
+                let found = false;
+                while (queue.length > 0) {
+                    const cur = queue.shift();
+                    if (gndSet.has(cur)) {
+                        found = true;
+                        break;
+                    }
+                    for (const next of (wireAdj.get(cur) || [])) {
+                        if (!visited.has(next)) {
+                            visited.add(next);
+                            queue.push(next);
+                        }
+                    }
+                }
+                if (found) {
+                    const vccComp = parsePin(startNode);
+                    issues.push({
+                        severity: 'ERROR',
+                        message: `ショート回路を検出！電源 "${vccComp.compId}" から GND へ抵抗なしで直結されています`
+                    });
+                    break; // 最初の1つだけ報告
+                }
+            }
+
+            return issues;
+        }
+
+        function checkDuplicateIds(netlist) {
+            const issues = [];
+            const ids = new Set();
+            for (const comp of netlist.components) {
+                if (ids.has(comp.id)) {
+                    issues.push({ severity: 'ERROR', message: `部品 ID "${comp.id}" が重複しています` });
+                }
+                ids.add(comp.id);
+            }
+            return issues;
+        }
+
+        function runAllChecks(netlist) {
+            const compMap = buildComponentMap(netlist.components);
+            const issues = [
+                ...checkDuplicateIds(netlist),
+                ...checkInvalidReferences(netlist, compMap),
+                ...checkDuplicateConnections(netlist),
+                ...checkShortCircuit(netlist, compMap),
+                ...checkFloatingPins(netlist, compMap),
+            ];
+            const hasError = issues.some(i => i.severity === 'ERROR');
+            return { passed: !hasError, issues };
+        }
+
+        // ─── 表示 ──────────────────────────────────────────────────────
+
+        const TYPE_LABELS = {
+            power: '電源', vcc: '電源',
+            ground: 'GND', gnd: 'GND',
+            resistor: '抵抗',
+            capacitor: 'コンデンサ',
+            inductor: 'インダクタ',
+            and_gate: 'ANDゲート',
+            or_gate: 'ORゲート',
+            not_gate: 'NOTゲート',
+            nand_gate: 'NANDゲート',
+            nor_gate: 'NORゲート',
+            xor_gate: 'XORゲート',
+        };
+
+        function renderResults(netlist, result) {
+            const section = document.getElementById('resultSection');
+            section.classList.add('visible');
+
+            // バッジ
+            const badge = document.getElementById('badge');
+            badge.textContent = result.passed ? 'PASS' : 'FAIL';
+            badge.className = 'badge ' + (result.passed ? 'pass' : 'fail');
+
+            // サマリー
+            const errCount = result.issues.filter(i => i.severity === 'ERROR').length;
+            const warnCount = result.issues.filter(i => i.severity === 'WARNING').length;
+            let summaryMsg = result.passed ? '問題は検出されませんでした。' : `${errCount} 件のエラーが検出されました。`;
+            if (warnCount > 0) summaryMsg += `（警告: ${warnCount} 件）`;
+            document.getElementById('summaryText').textContent = summaryMsg;
+
+            // 問題リスト
+            const issueList = document.getElementById('issueList');
+            issueList.innerHTML = '';
+            if (result.issues.length === 0) {
+                issueList.innerHTML = '<p style="color:#4caf50; font-size:0.95em;">✅ すべてのチェックをパスしました。</p>';
+            } else {
+                for (const issue of result.issues) {
+                    const div = document.createElement('div');
+                    div.className = 'issue-item ' + issue.severity.toLowerCase();
+                    div.innerHTML = `<span class="issue-tag ${issue.severity.toLowerCase()}">${issue.severity}</span><span>${issue.message}</span>`;
+                    issueList.appendChild(div);
+                }
+            }
+
+            // 部品一覧
+            const compList = document.getElementById('componentList');
+            compList.innerHTML = `<div class="component-list-title">部品一覧（${netlist.components.length} 件）</div>`;
+            const grid = document.createElement('div');
+            grid.className = 'component-grid';
+            for (const comp of netlist.components) {
+                const card = document.createElement('div');
+                card.className = 'component-card';
+                const typeLabel = TYPE_LABELS[comp.type.toLowerCase()] || comp.type;
+                card.innerHTML = `
+                    <div class="component-id">${comp.id}</div>
+                    <div class="component-type">${typeLabel}</div>
+                    ${comp.value ? `<div class="component-value">${comp.value}</div>` : ''}
+                `;
+                grid.appendChild(card);
+            }
+            compList.appendChild(grid);
+        }
+
+        // ─── 検証実行 ─────────────────────────────────────────────────
+
+        document.getElementById('verifyBtn').addEventListener('click', function() {
+            const raw = document.getElementById('jsonInput').value.trim();
+            const parseError = document.getElementById('parseError');
+
+            if (!raw) {
+                parseError.textContent = 'JSONを入力してください。';
+                parseError.style.display = 'block';
+                document.getElementById('resultSection').classList.remove('visible');
+                return;
+            }
+
+            let netlist;
+            try {
+                netlist = JSON.parse(raw);
+            } catch (e) {
+                parseError.textContent = 'JSONの解析に失敗しました: ' + e.message;
+                parseError.style.display = 'block';
+                document.getElementById('resultSection').classList.remove('visible');
+                return;
+            }
+
+            parseError.style.display = 'none';
+
+            if (!Array.isArray(netlist.components) || !Array.isArray(netlist.connections)) {
+                parseError.textContent = 'JSONには "components" と "connections" の配列が必要です。';
+                parseError.style.display = 'block';
+                document.getElementById('resultSection').classList.remove('visible');
+                return;
+            }
+
+            const result = runAllChecks(netlist);
+            renderResults(netlist, result);
+
+            document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+    </script>
+</body>
+</html>
